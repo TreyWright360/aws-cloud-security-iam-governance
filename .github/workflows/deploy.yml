@@ -40,7 +40,7 @@ jobs:
   deploy-governance:
     name: Deploy Security Baseline (Prod)
     needs: lint-and-validate
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.AWS_ROLE_TO_ASSUME != ''
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -55,7 +55,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
-          role-to-assume: arn:aws:iam::123456789012:role/GitHubActionsSecurityDeployRole
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
 
       - name: Terraform Init
         run: terraform init
