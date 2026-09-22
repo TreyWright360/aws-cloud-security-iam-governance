@@ -1,11 +1,15 @@
 # Enterprise Cloud Security, IAM Governance & Technical Debt Remediation
 
+> **Portfolio evidence status:** The Terraform and audit script are published; no dated AccessDenied lab or production remediation record is checked in. Use the [IAM AccessDenied runbook](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/security/iam-access-denied.md) and [duty map](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/DUTY-MAP.md) to see the intended operational proof.
+
+The [project case study](CASE-STUDY.md) summarizes what is implemented, the evidence gap, and production improvements.
+
 [![Terraform](https://img.shields.io/badge/IaC-Terraform_1.8+-623CE4.svg?logo=terraform)](https://www.terraform.io)
 [![CIS Benchmark](https://img.shields.io/badge/Compliance-CIS_AWS_v3.0-007ACC.svg)](https://www.cisecurity.org)
 [![AWS](https://img.shields.io/badge/AWS-Security_Governance-FF9900.svg?logo=amazon-aws)](https://aws.amazon.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A production-grade cloud security governance framework, automated compliance monitoring engine, and IAM technical debt remediation codebase built on AWS using modular Terraform. Modeled after real enterprise consulting cleanups (remediating 5+ years of unmanaged startup permissions debt), this system establishes continuous compliance against the **CIS AWS Foundations Benchmark v3.0**, detects public resource exposure via **IAM Access Analyzer**, and executes real-time event-driven remediation via **Amazon EventBridge** and **AWS Lambda**.
+This repository contains a modular Terraform design for AWS Config rules, IAM Access Analyzer, IAM governance, and EventBridge/Lambda remediation, plus a Python IAM audit script. The design is a portfolio lab; deployment, control coverage, response time, and compliance outcomes need separate evidence before they are presented as measured results.
 
 ---
 
@@ -44,15 +48,15 @@ A production-grade cloud security governance framework, automated compliance mon
 
 ---
 
-## 🛡️ CIS AWS Foundations Benchmark v3.0 Mapping
+## 🛡️ Implemented controls and validation gaps
 
-| CIS Benchmark Control | AWS Service Implementation | Remediation Mechanism |
+| Area | Current code | Validation gap |
 | :--- | :--- | :--- |
-| **1.5 (Level 1):** Ensure MFA is enabled for all IAM users | IAM Governance Group Policy | Denies all AWS API access if `aws:MultiFactorAuthPresent` is false. |
-| **1.16 (Level 1):** Ensure IAM policies are attached only to groups/roles | IAM Governance Module | Prohibits direct user-level inline policy attachments. |
-| **2.1.1 (Level 2):** Ensure S3 Bucket Public Access Block is enabled | AWS Config Rule + Lambda | EventBridge captures `NON_COMPLIANT` event and triggers Lambda `put_public_access_block`. |
-| **2.1.2 (Level 2):** Ensure S3 Bucket Policies require SSL/TLS | AWS Config Rule | Blocks unencrypted HTTP traffic across all storage buckets. |
-| **2.2.1 (Level 1):** Ensure EBS volume encryption is enabled | AWS Config Rule | Evaluates all attached EBS volumes for KMS encryption. |
+| MFA | A deny policy is attached to the `cloud_developers` group | It does not cover every IAM user or prove MFA was enforced in a lab |
+| IAM attachment | Auditor and developer groups have managed policy attachments | The module does not prohibit all direct user policy attachments |
+| S3 public read | AWS Config rule and remediation Lambda are defined | Capture a noncompliant event, Lambda execution, and corrected bucket state |
+| S3 TLS | `S3_BUCKET_SSL_REQUESTS_ONLY` Config rule is defined | It evaluates policy compliance; the rule itself does not block HTTP requests |
+| EBS encryption | `ENCRYPTED_VOLUMES` Config rule is defined | Capture evaluation results and identify remediation ownership |
 
 ---
 
@@ -60,13 +64,13 @@ A production-grade cloud security governance framework, automated compliance mon
 
 * **ADR 001: Event-Driven Serverless Auto-Remediation vs. Periodic Cron Scanning**
   * *Decision:* Implemented EventBridge integration with AWS Config rules over scheduled cron scripts.
-  * *Rationale:* Event-driven remediation reduces mean time to remediation (MTTR) from hours down to sub-10 seconds for critical misconfigurations like public S3 buckets.
+  * *Rationale:* Event-driven remediation can reduce detection-to-action time; this repository does not include a measured MTTR.
 * **ADR 002: Deny-All Conditional Policy for MFA Enforcement**
   * *Decision:* Applied a global `Deny` policy on all actions except MFA configuration if MFA is absent.
-  * *Rationale:* Guarantees users cannot execute any production commands or access sensitive data until physical or virtual MFA is validated.
+  * *Rationale:* Adds an MFA condition for members of the developer group; verify the exact policy effect and exclusions before relying on it for production access control.
 * **ADR 003: IAM Access Analyzer for Continuous External Exposure Tracking**
   * *Decision:* Deployed account-level IAM Access Analyzer.
-  * *Rationale:* Automatically detects cross-account IAM trust policies, public KMS keys, and open S3 buckets using formal logic mathematical reasoning.
+  * *Rationale:* Access Analyzer can identify external access findings; inspect the analyzer scope and supported resource types in the deployed account.
 
 ---
 
@@ -86,5 +90,5 @@ terraform init
 terraform plan -var-file="environments/prod.tfvars"
 
 # Apply governance controls
-terraform apply -var-file="environments/prod.tfvars" -auto-approve
+terraform apply -var-file="environments/dev.tfvars"
 ```
