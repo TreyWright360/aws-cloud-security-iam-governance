@@ -1,0 +1,41 @@
+name: Manual Production Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Select DEPLOY to request a protected production deployment
+        required: true
+        type: choice
+        options: [DEPLOY]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-governance:
+    name: Deploy Security Baseline (Prod)
+    if: github.ref == 'refs/heads/main' && inputs.confirm == 'DEPLOY'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.8.0"
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply (Prod Baseline)
+        run: terraform apply -var-file="environments/prod.tfvars" -auto-approve

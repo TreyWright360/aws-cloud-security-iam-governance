@@ -29,3 +29,11 @@ The Config log bucket enables encryption and public access block. The remediatio
 ## Production improvements
 
 Prove rule coverage against current control definitions, scope IAM resources more narrowly, validate the Lambda event pattern, test remediation and rollback, add alarm ownership, and record measured detection and correction times.
+
+## CI/CD and deployment validation
+
+- **CI status:** Repair in progress (repaired invalid `secrets.*` job-level condition, awaiting validation run).
+- **PR validation run:** Pending PR checks
+- **Main branch validation run:** Pending merge to main
+- **Deployment safeguards:** Automatic deployment is removed from push to `main`. Deployment is isolated in `.github/workflows/deploy-production.yml`, requiring manual `workflow_dispatch` trigger and approval via the protected `production` environment.
+
