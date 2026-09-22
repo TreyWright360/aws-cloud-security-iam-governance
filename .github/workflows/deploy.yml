@@ -1,13 +1,12 @@
-name: Security Governance CI/CD Pipeline
+name: Terraform CI Validation
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
@@ -21,7 +20,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.8.0
+          terraform_version: "1.8.0"
 
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
@@ -36,29 +35,3 @@ jobs:
         uses: aquasecurity/tfsec-action@v1.0.3
         with:
           soft_fail: true
-
-  deploy-governance:
-    name: Deploy Security Baseline (Prod)
-    needs: lint-and-validate
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.AWS_ROLE_TO_ASSUME != ''
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.8.0
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: us-east-1
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Apply (Prod Baseline)
-        run: terraform apply -var-file="environments/prod.tfvars" -auto-approve
