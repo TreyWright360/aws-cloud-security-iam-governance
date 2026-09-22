@@ -2,6 +2,8 @@
 
 > **Portfolio evidence status:** The Terraform and audit script are published; no dated AccessDenied lab or production remediation record is checked in. Use the [IAM AccessDenied runbook](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/security/iam-access-denied.md) and [duty map](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/DUTY-MAP.md) to see the intended operational proof.
 
+The [project case study](CASE-STUDY.md) summarizes what is implemented, the evidence gap, and production improvements.
+
 [![Terraform](https://img.shields.io/badge/IaC-Terraform_1.8+-623CE4.svg?logo=terraform)](https://www.terraform.io)
 [![CIS Benchmark](https://img.shields.io/badge/Compliance-CIS_AWS_v3.0-007ACC.svg)](https://www.cisecurity.org)
 [![AWS](https://img.shields.io/badge/AWS-Security_Governance-FF9900.svg?logo=amazon-aws)](https://aws.amazon.com)
