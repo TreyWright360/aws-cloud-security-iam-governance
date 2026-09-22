@@ -32,8 +32,9 @@ Prove rule coverage against current control definitions, scope IAM resources mor
 
 ## CI/CD and deployment validation
 
-- **CI status:** Repair in progress (repaired invalid `secrets.*` job-level condition, awaiting validation run).
-- **PR validation run:** Pending PR checks
-- **Main branch validation run:** Pending merge to main
+- **CI status:** Verified passing without AWS credentials or terraform apply on PR and main push.
+- **PR validation run:** [Run #35786777600](https://github.com/TreyWright360/aws-cloud-security-iam-governance/actions/runs/35786777600) (passed)
+- **Main branch validation run:** [Run #35786847850](https://github.com/TreyWright360/aws-cloud-security-iam-governance/actions/runs/35786847850) (passed, non-deploying)
 - **Deployment safeguards:** Automatic deployment is removed from push to `main`. Deployment is isolated in `.github/workflows/deploy-production.yml`, requiring manual `workflow_dispatch` trigger and approval via the protected `production` environment.
+
 
