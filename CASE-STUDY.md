@@ -1,6 +1,6 @@
 # Case study: AWS security and IAM governance
 
-**Portfolio status:** Terraform and audit code published; operational outcomes are documentation only.
+**Portfolio status:** PARTIALLY TESTED. Deployed live to AWS on 2026-09-23. The S3 public-bucket detection-and-remediation loop is verified end to end with measured timing. Other operational outcomes (AccessDenied/MFA lab, remediation behavior for the other three Config rules) remain documentation only.
 
 ## Business problem
 
@@ -12,7 +12,7 @@ The [root Terraform](main.tf) composes [AWS Config rules](modules/config_rules/m
 
 ## What is implemented
 
-The code defines a Config recorder and selected managed rules, IAM groups, an analyzer, and a Lambda intended to respond to noncompliance events. It does not prove broad CIS compliance or that a remediation event completed in AWS.
+The code defines a Config recorder and selected managed rules, IAM groups, an analyzer, and a Lambda intended to respond to noncompliance events. A live lab verified the S3 public-read path: Config flagged a deliberately public test bucket `NON_COMPLIANT` in 2m 43s, EventBridge invoked the remediation Lambda, the Lambda re-blocked public access, and anonymous access afterward returned `403`. It does not yet prove broad CIS compliance, and one bug surfaced during the lab: the Lambda logs "Triggering automated remediation..." for every non-compliant event it receives, even for rules its remediation branch does not actually act on (confirmed for `s3-bucket-ssl-requests-only`) — a log reader could mistake that line for a completed fix.
 
 ## Failure modes and runbooks
 
@@ -20,7 +20,7 @@ The [IAM AccessDenied runbook](https://github.com/TreyWright360/aws-cloud-operat
 
 ## Test evidence and video
 
-**DOCUMENTATION ONLY.** No redacted denied request, policy evaluation, correction, successful retry, or incident video is checked in. A lab should use a disposable role and harmless read action.
+**PARTIALLY TESTED.** The S3 public-bucket detection-and-remediation loop has [dated evidence](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/evidence/s3-public-remediation/INDEX.md) with a measured detection time and a post-fix `403` validation. The AccessDenied/MFA lab is still **DOCUMENTATION ONLY** — no redacted denied request, policy evaluation, correction, successful retry, or incident video is checked in yet. A lab should use a disposable role and harmless read action.
 
 ## Security and cost controls
 

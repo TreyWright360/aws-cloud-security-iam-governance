@@ -1,6 +1,6 @@
 # Enterprise Cloud Security, IAM Governance & Technical Debt Remediation
 
-> **Portfolio evidence status:** The Terraform and audit script are published; no dated AccessDenied lab or production remediation record is checked in. Use the [IAM AccessDenied runbook](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/security/iam-access-denied.md) and [duty map](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/DUTY-MAP.md) to see the intended operational proof.
+> **Portfolio evidence status:** PARTIALLY TESTED. Deployed to a live AWS lab account. The S3 public-bucket detection-and-remediation loop is verified end to end with measured timing — see [evidence](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/evidence/s3-public-remediation/INDEX.md). The AccessDenied/MFA lab and the other three Config rules' remediation behavior are not yet tested. Use the [IAM AccessDenied runbook](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/security/iam-access-denied.md) and [duty map](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/DUTY-MAP.md) for what's still pending.
 
 The [project case study](CASE-STUDY.md) summarizes what is implemented, the evidence gap, and production improvements.
 
