@@ -1,6 +1,6 @@
 # Case study: AWS security and IAM governance
 
-**Portfolio status:** PARTIALLY TESTED. Deployed live to AWS on 2026-09-23. The S3 public-bucket detection-and-remediation loop is verified end to end with measured timing. Other operational outcomes (AccessDenied/MFA lab, remediation behavior for the other three Config rules) remain documentation only.
+**Portfolio status:** PARTIALLY TESTED. Deployed live to AWS on 2026-09-23. Two labs are verified end to end with dated evidence: S3 public-bucket detection-and-remediation, and the MFA-enforcement explicit-deny path. Remediation behavior for the other three Config rules remains documentation only.
 
 ## Business problem
 
@@ -20,7 +20,7 @@ The [IAM AccessDenied runbook](https://github.com/TreyWright360/aws-cloud-operat
 
 ## Test evidence and video
 
-**PARTIALLY TESTED.** The S3 public-bucket detection-and-remediation loop has [dated evidence](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/evidence/s3-public-remediation/INDEX.md) with a measured detection time and a post-fix `403` validation. The AccessDenied/MFA lab is still **DOCUMENTATION ONLY** — no redacted denied request, policy evaluation, correction, successful retry, or incident video is checked in yet. A lab should use a disposable role and harmless read action.
+**PARTIALLY TESTED.** The S3 public-bucket detection-and-remediation loop has [dated evidence](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/evidence/s3-public-remediation/INDEX.md) with a measured detection time and a post-fix `403` validation. The MFA-enforcement explicit-deny path has [dated evidence](https://github.com/TreyWright360/aws-cloud-operations-handbook/blob/main/evidence/iam-access-denied-mfa/INDEX.md): a disposable test user was denied `s3:ListAllMyBuckets` without MFA, then the identical call succeeded once an MFA-backed session was used, both captured from CloudTrail. No incident video yet for either lab.
 
 ## Security and cost controls
 
